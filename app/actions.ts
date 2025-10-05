@@ -7,6 +7,18 @@ export type AQIHistoryPoint = {
     aqi: number;
 };
 
+export type AQIForecastPoint = {
+    time: string;
+    isoTimestamp: string;
+    aqi: number;
+    confidence: number;
+};
+
+export type AQIForecastResult = {
+    generatedAt: string;
+    points: AQIForecastPoint[];
+};
+
 export type HistoryTrendPoint = {
     time: string;
     no2: number;
@@ -16,6 +28,12 @@ export type HistoryTrendPoint = {
 };
 
 const DAYS_OF_HISTORY = 30;
+const NASA_TEMPO_FORECAST_URL = 'https://nasa-tempo-air-quality-api-4.onrender.com/api/v1/air-quality/forecast';
+
+const forecastLabelFormatter = new Intl.DateTimeFormat('fr-FR', {
+    hour: '2-digit',
+    minute: '2-digit',
+});
 
 const formatHistoryLabel = (date: Date) =>
     new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'short' }).format(date);
@@ -57,6 +75,75 @@ export async function getAQIPassData(locationCoords: [number, number]): Promise<
         time: formatHistoryLabel(timestamp),
         aqi,
     }));
+}
+
+export async function getAQIForecast(locationCoords: [number, number], hours = 24): Promise<AQIForecastResult> {
+    if (!Array.isArray(locationCoords) || locationCoords.length !== 2) {
+        throw new Error('Invalid location coordinates provided for AQI forecast.');
+    }
+
+    const [latitude, longitude] = locationCoords;
+
+    const url = new URL(NASA_TEMPO_FORECAST_URL);
+    url.searchParams.set('latitude', latitude.toString());
+    url.searchParams.set('longitude', longitude.toString());
+    url.searchParams.set('hours', hours.toString());
+
+    let response: Response;
+    try {
+        response = await fetch(url.toString(), {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+            },
+            cache: 'no-store',
+        });
+    } catch (error) {
+        throw new Error("Impossible d'atteindre l'API de prévision AQI.");
+    }
+
+    if (!response.ok) {
+        throw new Error(`Requête de prévision AQI échouée (${response.status}).`);
+    }
+
+    const payload = await response.json();
+
+    if (!payload || !Array.isArray(payload.predictions)) {
+        throw new Error('Réponse de prévision AQI mal formée.');
+    }
+
+    const mappedPoints = (payload.predictions as any[]).map((item): AQIForecastPoint | null => {
+            const isoTimestamp = typeof item?.timestamp === 'string' ? item.timestamp : '';
+            const predictedAQI = Number(item?.predicted_aqi);
+            const confidenceValue = Number(item?.confidence ?? 0);
+
+            const timestampDate = new Date(isoTimestamp);
+            if (!isoTimestamp || Number.isNaN(timestampDate.getTime()) || Number.isNaN(predictedAQI)) {
+                return null;
+            }
+
+            const boundedConfidence = Math.max(0, Math.min(1, Number.isNaN(confidenceValue) ? 0 : confidenceValue));
+
+            return {
+                time: forecastLabelFormatter.format(timestampDate),
+                isoTimestamp,
+                aqi: Math.min(500, Math.max(0, Math.round(predictedAQI))),
+                confidence: boundedConfidence,
+            };
+        });
+
+    const points = mappedPoints
+        .filter((point): point is AQIForecastPoint => point !== null)
+        .sort((a: AQIForecastPoint, b: AQIForecastPoint) => new Date(a.isoTimestamp).getTime() - new Date(b.isoTimestamp).getTime());
+
+    if (!points.length) {
+        throw new Error('Aucune donnée de prévision AQI disponible.');
+    }
+
+    return {
+        generatedAt: typeof payload.forecast_timestamp === 'string' ? payload.forecast_timestamp : new Date().toISOString(),
+        points,
+    };
 }
 
 export async function subscribeToNotifications(data: { email: string; name: string; location: string }) {

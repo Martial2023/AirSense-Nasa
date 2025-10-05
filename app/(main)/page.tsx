@@ -9,6 +9,7 @@ import React from 'react'
 import AirComposite from '@/components/components/AirComposite';
 import AQIHistory from '@/components/components/AQIHistory';
 import dynamic from "next/dynamic";
+import PredictedTrend from '@/components/components/PredictedTrend';
 
 const ShowLocationMap = dynamic(() => import('@/components/components/ShowLocationMap'), { ssr: false });
 
@@ -32,7 +33,7 @@ const page = () => {
         lastUpdated: "4 minutes ago"
     }
     return (
-        <main className='min-h-screen px-4'>
+        <main className='min-h-screen px-2 md:px-4'>
             <ShowLocationMap
                 data={realLocationData}
             />
@@ -53,22 +54,16 @@ const page = () => {
                 data={realLocationData}
             />
 
+            <PredictedTrend
+                data={realLocationData}
+            />
+
             <AQIHistory
                 data={realLocationData}
             />
 
-            <div className='h-screen'>
-
-            </div>
-
-            {/* <CurrentMap data={realLocationData} /> */}
-            {/* <AQIInfoSection
-                locationData={mockLocationData}
-            /> */}
-
 
             {/* <HistoryTrend /> */}
-
             <AQIChat
                 data={realLocationData}
             />

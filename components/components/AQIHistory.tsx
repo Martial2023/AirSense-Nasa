@@ -72,12 +72,16 @@ const AQIHistory = ({ data }: Props) => {
     const maxEntry = summary?.max;
 
     return (
-        <section className='flex items-center justify-center w-full px-4 md:px-8'>
+        <section className='flex items-center justify-center w-full px-1 md:px-8'>
             <div className='p-2 bg-white dark:bg-zinc-900 w-full rounded-3xl shadow-2xl my-8'>
                 <div className='space-y-6 flex items-center justify-between w-full p-4'>
-                    <h2 className='text-xl font-semibold border-1 p-1.5 rounded-xl flex items-center gap-1'>
-                        <MapPin className="w-4 h-4 text-gray-500" /> {data.name}
-                    </h2>
+                    <div className='flex flex-col'>
+                        <h2 className='text-2xl font-bold'>Air Quality History</h2>
+                        <div className='flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400'>
+                            <MapPin className='w-4 h-4' />
+                            <span>{data.name}</span>
+                        </div>
+                    </div>
 
                     <div className='flex items-center gap-2.5'>
                         {minEntry && (
