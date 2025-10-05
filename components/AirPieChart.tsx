@@ -19,6 +19,7 @@ const AirPieChart = ({ data }: Props) => {
     const RADIAN = Math.PI / 180;
     const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A569BD', '#FF5733'];
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
         const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
         const x = cx + radius * Math.cos(-midAngle * RADIAN);
