@@ -11,7 +11,7 @@ import SubscribeForm from "./SubscribeForm";
 const NAV_LINKS = [
   { label: "Map", href: "/map" },
   { label: "Comparison", href: "/comparison" },
-  { label: "Quiz", href: "/quiz" },
+  { label: "Quiz", href: "/quiz" }, //Tap
 ];
 
 export default function Navbar() {
