@@ -123,3 +123,37 @@ export const mockLocationData: LocationDataType = {
     visibility: 10,
     lastUpdated: "4 minutes ago"
 };
+
+export interface NearbyStation {
+    id: string;
+    name: string;
+    latitude: number;
+    longitude: number;
+    distanceKm: number;
+    type: string;
+    pollutants: string[];
+    network: string | null;
+    status: string;
+    lastUpdate: string | null;
+}
+
+export interface NearbyStationsResult {
+    stations: NearbyStation[];
+    totalFound: number;
+    searchCenter: {
+        latitude: number;
+        longitude: number;
+        city?: string | null;
+        stateProvince?: string | null;
+        country?: string | null;
+    };
+    parameters: {
+        radiusKm: number;
+        limit: number;
+    };
+    dataAvailability?: {
+        primarySources: string[];
+        airQualityStandard?: string | null;
+        estimatedCoverage?: string | null;
+    };
+}

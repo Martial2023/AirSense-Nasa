@@ -18,10 +18,10 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="w-full border-b bg-white dark:bg-zinc-900 shadow-sm sticky top-0 z-40 backdrop-blur">
+    <nav className="w-full border-b bg$-white dark:bg-zinc-900 shadow-sm sticky top-0 z-40 backdrop-blur">
       <div className="mx-auto flex w-full max-w-6xl flex-col px-4 md:px-6">
         <div className="flex items-center gap-3 justify-between py-4">
-        {/* Logo */}
+          {/* Logo */}
           <div className="flex items-center space-x-2">
             <Link href="/" className="flex items-center text-xl font-bold text-primary sm:text-2xl">
               <span>Air</span>
@@ -29,7 +29,7 @@ export default function Navbar() {
             </Link>
           </div>
 
-        {/* Desktop Search - Hidden on mobile */}
+          {/* Desktop Search - Hidden on mobile */}
           <div className="mx-6 hidden flex-1 md:flex">
             <div className="relative w-full">
               <Input
@@ -46,7 +46,7 @@ export default function Navbar() {
             </div>
           </div>
 
-        {/* Desktop Menu - Hidden on mobile */}
+          {/* Desktop Menu - Hidden on mobile */}
           <div className="hidden items-center space-x-6 text-sm md:flex">
             <nav className="flex items-center gap-3">
               {NAV_LINKS.map(({ label, href }) => (
@@ -65,16 +65,15 @@ export default function Navbar() {
             </div>
 
             <ThemeToggle />
+          </div>
 
+          {/* Mobile Menu Icons */}
+          <div className="flex items-center space-x-2 md:hidden">
             <SubscribeForm>
-              <Button className="rounded-full bg-blue-600 px-5 text-white transition-all hover:scale-105 hover:bg-blue-700">
+              <Button onClick={() => setIsMobileMenuOpen(false)} className="rounded-full bg-blue-600 px-5 text-white transition-all hover:scale-105 hover:bg-blue-700">
                 Get Notified
               </Button>
             </SubscribeForm>
-          </div>
-
-        {/* Mobile Menu Icons */}
-          <div className="flex items-center space-x-2 md:hidden">
             <ThemeToggle />
 
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -123,15 +122,6 @@ export default function Navbar() {
                       <span className="flex items-center gap-2"><Globe className="h-4 w-4" /> English</span>
                     </button>
                   </nav>
-
-                  <SubscribeForm>
-                    <Button
-                      className="w-full rounded-full bg-blue-600 py-3 text-white transition hover:bg-blue-700"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Get Notified
-                    </Button>
-                  </SubscribeForm>
                 </div>
               </SheetContent>
             </Sheet>

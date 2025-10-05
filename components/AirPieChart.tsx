@@ -34,7 +34,7 @@ const AirPieChart = ({ data }: Props) => {
 
         return (
             <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central">
-                {`${name} (${(percent * 100).toFixed(0)}%)`}
+                {`${(percent * 100).toFixed(0)}%`}
             </text>
         );
     };

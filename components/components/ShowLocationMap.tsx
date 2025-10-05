@@ -1,8 +1,8 @@
 'use client'
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet'
 import L from 'leaflet'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { LocationDataType } from '@/lib/types'
 
 // 📍 Définir les couleurs AQI dynamiquement
@@ -29,20 +29,46 @@ const createAqiIcon = (aqi: number) => {
 
 type Props = {
     data: LocationDataType
+    onLocationSelected?: (coords: [number, number]) => void
 }
 
-const ShowLocationMap = ({ data }: Props) => {
+const MapPositionUpdater = ({ position }: { position: [number, number] }) => {
+    const map = useMap()
+
+    useEffect(() => {
+        map.setView(position, map.getZoom())
+    }, [map, position])
+
+    return null
+}
+
+const LocationClickHandler = ({ onSelect }: { onSelect?: (coords: [number, number]) => void }) => {
+    useMapEvents({
+        click(event) {
+            if (onSelect) {
+                onSelect([event.latlng.lat, event.latlng.lng])
+            }
+        },
+    })
+
+    return null
+}
+
+const ShowLocationMap = ({ data, onLocationSelected }: Props) => {
     const [lat, lng] = data.coordinates
+    const position: [number, number] = [lat, lng]
 
     return (
         <section className='z-1 w-full h-80 md:h-[350px] rounded-b-2xl shadow-md overflow-hidden'>
             <MapContainer
-                center={[lat, lng]}
+                center={position}
                 zoom={11}
                 scrollWheelZoom={true}
                 style={{ width: '100%', height: '100%' }}
                 className="z-0"
             >
+                <MapPositionUpdater position={position} />
+                <LocationClickHandler onSelect={onLocationSelected} />
                 {/* 🗺️ Fond de carte (ici OpenStreetMap libre et gratuit) */}
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
@@ -50,14 +76,14 @@ const ShowLocationMap = ({ data }: Props) => {
                 />
 
                 {/* 📍 Marqueur dynamique */}
-                <Marker position={[lat, lng]} icon={createAqiIcon(data.aqi)}>
+                <Marker position={position} icon={createAqiIcon(data.aqi)}>
                     <Popup>
                         <div className="text-sm">
                             <p><strong>{data.name}</strong></p>
                             <p>AQI: {data.aqi}</p>
-                            <p>Température: {data.temperature}°C</p>
-                            <p>Humidité: {data.humidity}%</p>
-                            <p>Dernière mise à jour: {new Date(data.lastUpdated).toLocaleString()}</p>
+                            <p>Temperature: {data.temperature}°C</p>
+                            <p>Humidity: {data.humidity}%</p>
+                            <p>Last Updated: {new Date(data.lastUpdated).toLocaleString()}</p>
                         </div>
                     </Popup>
                 </Marker>

@@ -1,20 +1,21 @@
 'use client';
-import React, { useEffect, useState } from 'react'
-import type { LocationDataType } from '@/lib/types';
+import React, { useEffect, useMemo, useState } from 'react'
+import type { LocationDataType, NearbyStationsResult } from '@/lib/types';
 import { Button } from './ui/button';
 import { MapPin, Heart, Share2, BotIcon } from 'lucide-react';
-import { getAQILevel, getAQIColor } from '@/lib/types';
-import Image from 'next/image';
+import { getAQILevel } from '@/lib/types';
 import { answerUserQuestion } from '@/lib/AIAnalysisFunction';
 import MinLoader from './MinLoader';
 
 interface AQIInfoSectionProps {
     locationData: LocationDataType;
+    nearby?: NearbyStationsResult | null;
+    onLocate?: () => void;
+    locating?: boolean;
 }
 
-const AQIInfoSection: React.FC<AQIInfoSectionProps> = ({ locationData }) => {
+const AQIInfoSection: React.FC<AQIInfoSectionProps> = ({ locationData, nearby, onLocate, locating }) => {
     const aqiLevel = getAQILevel(locationData.aqi);
-    const aqiColor = getAQIColor(locationData.aqi);
     const [tips, setTips] = useState<string>("")
     const [loadingTips, setLoadingTips] = useState<boolean>(false)
 
@@ -64,6 +65,10 @@ const AQIInfoSection: React.FC<AQIInfoSectionProps> = ({ locationData }) => {
         fetchTips();
     }, [locationData.aqi])
 
+    const searchCenter = nearby?.searchCenter;
+    const stationCount = nearby?.totalFound ?? nearby?.stations.length ?? null;
+    const dataSources = useMemo(() => nearby?.dataAvailability?.primarySources ?? [], [nearby]);
+
     return (
         <section className="relative w-full rounded-2xl px-4 md:px-8 -mt-10 z-">
             <div className={`bg-gradient-to-br ${getBgGradient()} rounded-3xl p-6 md:p-8 shadow-md`}>
@@ -74,9 +79,16 @@ const AQIInfoSection: React.FC<AQIInfoSectionProps> = ({ locationData }) => {
                     </button>
 
                     <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" className="bg-white/90 hover:bg-white">
+                        <Button
+                            type="button"
+                            onClick={onLocate}
+                            disabled={locating}
+                            variant="outline"
+                            size="sm"
+                            className="bg-white/90 hover:bg-white"
+                        >
                             <MapPin className="w-4 h-4" />
-                            Locate me
+                            {locating ? 'Locating…' : 'Locate me'}
                         </Button>
                         <Button variant="ghost" size="sm" className="text-white hover:bg-white/20">
                             <Heart className="w-4 h-4" />
@@ -95,6 +107,21 @@ const AQIInfoSection: React.FC<AQIInfoSectionProps> = ({ locationData }) => {
                     <p className="text-gray-700 text-sm">
                         Last Updated: {locationData.lastUpdated} (Local Time)
                     </p>
+                    {searchCenter && (
+                        <p className="text-gray-700 text-sm">
+                            Zone géographique : {searchCenter.city ?? '—'} · {searchCenter.stateProvince ?? '—'} · {searchCenter.country ?? '—'}
+                        </p>
+                    )}
+                    {stationCount !== null && (
+                        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-gray-700">
+                            <span className="bg-white/70 dark:bg-zinc-900/40 px-3 py-1 rounded-full font-semibold">
+                                {stationCount} station(s) suivie(s)
+                            </span>
+                            {dataSources.length > 0 && (
+                                <span>Sources : {dataSources.join(', ')}</span>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 {/* Contenu principal */}

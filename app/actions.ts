@@ -1,6 +1,8 @@
 'use server'
 
+import { parseNearbyStationsPayload } from "@/lib/nasaTempo"
 import { prisma } from "@/lib/prisma"
+import { NearbyStationsResult } from "@/lib/types"
 
 export type AQIHistoryPoint = {
     time: string;
@@ -29,6 +31,7 @@ export type HistoryTrendPoint = {
 
 const DAYS_OF_HISTORY = 30;
 const NASA_TEMPO_FORECAST_URL = 'https://nasa-tempo-air-quality-api-4.onrender.com/api/v1/air-quality/forecast';
+const NASA_TEMPO_NEARBY_URL = 'https://nasa-tempo-air-quality-api-4.onrender.com/api/v1/geolocation/nearby';
 
 const forecastLabelFormatter = new Intl.DateTimeFormat('fr-FR', {
     hour: '2-digit',
@@ -144,6 +147,57 @@ export async function getAQIForecast(locationCoords: [number, number], hours = 2
         generatedAt: typeof payload.forecast_timestamp === 'string' ? payload.forecast_timestamp : new Date().toISOString(),
         points,
     };
+}
+
+export async function getNearbyStations(
+    locationCoords: [number, number],
+    options?: { radiusKm?: number; limit?: number }
+): Promise<NearbyStationsResult> {
+    if (!Array.isArray(locationCoords) || locationCoords.length !== 2) {
+        throw new Error('Invalid location coordinates provided for nearby station search.');
+    }
+
+    const [latitude, longitude] = locationCoords;
+    const radiusKm = options?.radiusKm ?? 50;
+    const limit = options?.limit ?? 20;
+
+    const url = new URL(NASA_TEMPO_NEARBY_URL);
+    url.searchParams.set('latitude', latitude.toString());
+    url.searchParams.set('longitude', longitude.toString());
+    url.searchParams.set('radius_km', radiusKm.toString());
+    url.searchParams.set('limit', limit.toString());
+
+    let response: Response;
+    try {
+        response = await fetch(url.toString(), {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+            },
+            cache: 'no-store',
+        });
+    } catch (error) {
+        throw new Error("Impossible d'atteindre l'API de géolocalisation AQI.");
+    }
+
+    if (!response.ok) {
+        throw new Error(`Requête de géolocalisation AQI échouée (${response.status}).`);
+    }
+
+    const payload = await response.json();
+
+    return parseNearbyStationsPayload(payload, {
+        fallback: {
+            latitude,
+            longitude,
+            radiusKm,
+            limit,
+        },
+        messages: {
+            malformed: 'Réponse de géolocalisation AQI mal formée.',
+            empty: 'Aucune station AQI disponible pour ces coordonnées.',
+        },
+    });
 }
 
 export async function subscribeToNotifications(data: { email: string; name: string; location: string }) {
