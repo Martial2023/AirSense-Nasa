@@ -5,9 +5,12 @@ import AQIInfoSection from '@/components/AQIInfoSection'
 import HistoryTrend from '@/components/HistoryTrend'
 import { LocationDataType } from '@/lib/types'
 import React from 'react'
-import ShowLocationMap from '@/components/components/ShowLocationMap';
+// import ShowLocationMap from '@/components/components/ShowLocationMap';
 import AirComposite from '@/components/components/AirComposite';
 import AQIHistory from '@/components/components/AQIHistory';
+import dynamic from "next/dynamic";
+
+const ShowLocationMap = dynamic(() => import('@/components/components/ShowLocationMap'), { ssr: false });
 
 const page = () => {
     const realLocationData: LocationDataType = {
