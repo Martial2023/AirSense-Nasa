@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { LocationData, mockLocationData } from '@/lib/types'
+import { LocationDataType, mockLocationData } from '@/lib/types'
 
 interface AQIMetadata {
   aqi: number
@@ -27,7 +27,7 @@ export const useAQIMetadata = () => {
   })
 
   // Fonction pour mettre à jour les métadonnées
-  const updateMetadata = (newData: Partial<LocationData>) => {
+  const updateMetadata = (newData: Partial<LocationDataType>) => {
     setMetadata(prev => ({
       ...prev,
       aqi: newData.aqi ?? prev.aqi,
