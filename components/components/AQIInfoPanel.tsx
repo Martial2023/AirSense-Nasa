@@ -10,7 +10,6 @@ interface AQIInfoPanelProps {
 
 const AQIInfoPanel: React.FC<AQIInfoPanelProps> = ({ locationData }) => {
     const aqiLevel = getAQILevel(locationData.aqi);
-    const bgClass = getAQIBgClass(locationData.aqi);
 
     return (
         <div className="absolute top-[20] left-6 right-6 z-10">
