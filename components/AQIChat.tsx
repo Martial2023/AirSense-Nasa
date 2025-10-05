@@ -1,11 +1,10 @@
 'use client'
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { GoogleGenerativeAI } from '@google/generative-ai'
 import { Send, MessageCircle, X, Bot, User, Loader2, Wind, MapPin, Activity } from 'lucide-react'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
-import { mockLocationData, getAQILevel, LocationDataType } from '@/lib/types'
+import { getAQILevel, LocationDataType } from '@/lib/types'
 import { answerUserQuestion } from '@/lib/AIAnalysisFunction'
 
 interface Message {
@@ -286,7 +285,7 @@ const AQIChat = ({ data }: Props) => {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-lg">Assistant AQI</h3>
-                                        <p className="text-xs opacity-80">Conseils en qualité de l'air</p>
+                                        <p className="text-xs opacity-80">Health Assistant</p>
                                     </div>
                                 </div>
                                 <div className="text-right">
@@ -363,7 +362,7 @@ const AQIChat = ({ data }: Props) => {
                                         <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl px-4 py-2">
                                             <div className="flex items-center space-x-2">
                                                 <Loader2 className="w-4 h-4 animate-spin" />
-                                                <span className="text-sm text-gray-600 dark:text-gray-400">Réflexion...</span>
+                                                <span className="text-sm text-gray-600 dark:text-gray-400">Running...</span>
                                             </div>
                                         </div>
                                     </div>
@@ -381,7 +380,7 @@ const AQIChat = ({ data }: Props) => {
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                     onKeyPress={handleKeyPress}
-                                    placeholder="Posez une question sur l'AQI..."
+                                    placeholder="Ask about air quality..."
                                     className={`flex-1 rounded-full border-gray-300 dark:border-gray-600 
                     focus:ring-2 focus:ring-${aqiLevel.level === 'Good' ? 'green' : aqiLevel.level === 'Moderate' ? 'yellow' : aqiLevel.level.includes('Unhealthy') ? 'red' : aqiLevel.level === 'Very Unhealthy' ? 'purple' : 'red'}-500 focus:border-transparent
                     bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm`}
