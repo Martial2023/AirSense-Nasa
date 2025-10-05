@@ -4,7 +4,6 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ResponsiveToaster } from "@/components/ResponsiveToaster";
 import Navbar from "@/components/Navbar";
-import CurrentMap from "@/components/CurrentMap";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
