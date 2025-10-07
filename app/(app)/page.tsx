@@ -1,5 +1,4 @@
 'use client'
-import MapComponent from '@/components/app_components/MapComponent'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useSearch } from './context/SearchContext'
 import { LocationDataType } from '@/lib/types'
@@ -12,6 +11,11 @@ import AITipsForUser from '@/components/app_components/AITipsForUser'
 import AirComposite from '@/components/app_components/AirComposite'
 import AQIHistory from '@/components/app_components/AQIHistory'
 import MinLoader from '@/components/MinLoader'
+import dynamic from 'next/dynamic'
+const MapComponent = dynamic(
+  () => import('@/components/app_components/MapComponent'),
+  { ssr: false }
+)
 
 const getStatus = (aqi: number) => {
     if (aqi <= 50) return "Good"
