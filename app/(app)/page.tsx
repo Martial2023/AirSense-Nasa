@@ -49,7 +49,7 @@ const Page = () => {
 
     useEffect(() => {
         fetchFullLocationData()
-    }, [coordinates, search, fetchFullLocationData])
+    }, [coordinates, search])
 
     useEffect(() => {
         if (typeof window !== 'undefined' && navigator.geolocation) {
