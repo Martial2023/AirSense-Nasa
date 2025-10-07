@@ -157,3 +157,25 @@ export interface NearbyStationsResult {
         estimatedCoverage?: string | null;
     };
 }
+
+export type AQIForecastPoint = {
+    time: string;
+    isoTimestamp: string;
+    aqi: number;
+    confidence: number;
+};
+
+export type AQIForecastResult = {
+    generatedAt: string;
+    points: AQIForecastPoint[];
+};
+
+export type AQIForecastResponse = {
+    data: AQIForecastResult | null;
+    error?: string;
+};
+
+export type AQIHistoryPoint = {
+    time: string;
+    aqi: number;
+};

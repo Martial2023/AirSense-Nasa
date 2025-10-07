@@ -22,7 +22,7 @@ const AirPieChart = ({ data }: Props) => {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const renderCustomizedLabel = (props: any) => {
-        const { cx, cy, midAngle, innerRadius, outerRadius, percent, name } = props;
+        const { cx, cy, midAngle, innerRadius, outerRadius, percent } = props;
         const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
         const x = cx + radius * Math.cos(-midAngle * RADIAN);
         const y = cy + radius * Math.sin(-midAngle * RADIAN);
@@ -41,10 +41,10 @@ const AirPieChart = ({ data }: Props) => {
 
     return (
         <div className='h-[350px] w-full'>
-            <h3 className="text-lg font-semibold text-center mb-2">Pollutant Distribution (µg/m³)</h3>
+            <h3 className="text-lg font-semibold text-center">Pollutant Distribution (µg/m³)</h3>
             <div className="h-full w-full p-2">
-                <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
+                <ResponsiveContainer width="100%" height="90%">
+                    <PieChart className='bg-gray-100 dark:bg-zinc-800 p-3 rounded-2xl shadow-sm'>
                         <Pie
                             data={chartData}
                             cx="50%"

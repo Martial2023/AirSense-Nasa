@@ -38,7 +38,7 @@ const AQIChat = ({ data }: Props) => {
     const [messages, setMessages] = useState<Message[]>([
         {
             id: '1',
-            content: "Bonjour ! Je suis votre assistant AQI. Je peux vous aider avec des informations sur la qualité de l'air et des conseils de santé. Que souhaitez-vous savoir ?",
+            content: "Hello! I'm your AQI assistant. I can help you with information about air quality and provide health advice. What would you like to know?",
             isUser: false,
             timestamp: new Date(),
             metadata: {
@@ -48,7 +48,7 @@ const AQIChat = ({ data }: Props) => {
     ])
     const [input, setInput] = useState('')
     const [isLoading, setIsLoading] = useState(false)
-    const [currentMetadata, setCurrentMetadata] = useState<AQIMetadata>({
+    const currentMetadata: AQIMetadata = {
         aqi: data.aqi,
         location: data.name,
         pm25: data.pm25,
@@ -56,7 +56,7 @@ const AQIChat = ({ data }: Props) => {
         lastUpdated: data.lastUpdated,
         temperature: data.temperature,
         humidity: data.humidity
-    })
+    }
 
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const chatInputRef = useRef<HTMLInputElement>(null)
@@ -94,6 +94,7 @@ const AQIChat = ({ data }: Props) => {
                     Ne dépasse pas 150 mots dans ta réponse.
                     Evite les caractères spéciaux inutiles dans ta réponse.
                     Fournis ta réponse en texte brut sans formatage markdown.
+                    REPONDS EXCLUSIVEMENT EN ANGLAIS
             `
 
             const prompt = `${context}\n\nQuestion de l'utilisateur: ${userMessage}`

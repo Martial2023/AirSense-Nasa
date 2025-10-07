@@ -2,13 +2,23 @@ import { LocationDataType } from '@/lib/types'
 import React from 'react'
 import AirPieChart from '../AirPieChart'
 import { Cloud, Droplets, Eye, Wind } from 'lucide-react'
+import MinLoader from '../MinLoader'
 
 type Props = {
-    data: LocationDataType
+    data: LocationDataType | undefined
+    loading: boolean
 }
-const AirComposite: React.FC<Props> = ({ data }: Props) => {
+const AirComposite: React.FC<Props> = ({ data, loading }: Props) => {
+    if (loading || !data) {
+        return (
+            <div className='w-full flex items-center justify-center col-span-1 md:col-span-2 bg-white dark:bg-zinc-900 my-4 rounded-2xl shadow-xl h-48'>
+                <MinLoader />
+                <p className='text-gray-400'>Loading...</p>
+            </div>
+        )
+    }
     return (
-        <section className='grid grid-cols-1 lg:grid-cols-2 items-center justify-center bg-white dark:bg-zinc-800 my-4 mt-6 rounded-2xl shadow-xl'>
+        <section className='grid grid-cols-1 lg:grid-cols-2 items-center justify-center bg-white dark:bg-zinc-900 my-4 rounded-2xl shadow-sm'>
             <div className="p-6 space-y-6">
                 <AirPieChart
                     data={data}

@@ -2,10 +2,8 @@ import React, { useState } from 'react'
 import {
     Credenza,
     CredenzaBody,
-    CredenzaClose,
     CredenzaContent,
     CredenzaDescription,
-    CredenzaFooter,
     CredenzaHeader,
     CredenzaTitle,
     CredenzaTrigger,
@@ -14,7 +12,7 @@ import { Button } from './ui/button'
 import { Input } from './ui/input';
 import { toast } from 'sonner';
 import { Loader } from 'lucide-react';
-import { subscribeToNotifications } from '@/app/actions';
+import { subscribeToNotifications } from '@/app/(actions)/actions';
 
 type SubscribeFormProps = {
     children: React.ReactNode;
@@ -36,7 +34,7 @@ const SubscribeForm = ({ children }: SubscribeFormProps) => {
             await subscribeToNotifications({ email, name, location });
             toast.success('Subscription successful! You will receive notifications about Air Quality in your location.');
             setIsOpen(false);
-        } catch (error) {
+        } catch {
             toast.error('Subscription failed. Please try again.');
         }finally {
             setIsSubscribing(false);
